@@ -2,6 +2,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LibraryTest {
@@ -59,5 +61,29 @@ class LibraryTest {
         //Unknown Error is printed.
         assertEquals(-999, test.convertInt("-5", Code.READER_COUNT_ERROR));
 //      }
+    }
+    @Test
+    void convertDate(){
+        Library test = new Library("test");
+        //test case of String date == 0000
+        assertEquals(LocalDate.of(1970,1,1),
+                test.convertDate("0000",Code.DATE_CONVERSION_ERROR));
+        //not applicable string date returns NumberFormatException
+        assertEquals(LocalDate.of(1970,1,1),
+                test.convertDate("yyyy-mm",Code.DATE_CONVERSION_ERROR));
+        //
+        assertEquals(LocalDate.of(1970,1,1),
+                test.convertDate("-0001-01-01",Code.DATE_CONVERSION_ERROR));
+        assertEquals(LocalDate.of(1970,1,1),
+                test.convertDate("0000--01-01",Code.DATE_CONVERSION_ERROR));
+        assertEquals(LocalDate.of(1970,1,1),
+                test.convertDate("0000-00--01",Code.DATE_CONVERSION_ERROR));
+        assertEquals(LocalDate.of(0001,01,01),
+                test.convertDate("0001-01-01",Code.DATE_CONVERSION_ERROR));
+        //DateTimeException not catching?
+//        assertEquals(LocalDate.of(9999,99,99),
+//                test.convertDate("9999-99-99",Code.DATE_CONVERSION_ERROR));
+//        assertEquals(LocalDate.of(0000,00,00),
+//                test.convertDate("0000-00-00",Code.DATE_CONVERSION_ERROR));
     }
 }
