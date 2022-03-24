@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Library {
-
+//-----------FIELDS------
         static final int LENDING_LIMIT = 5;
         String name;
         static int libraryCard;
         List<Reader> readers  =  new ArrayList<>();
         HashMap<String, Shelf> shelves  = new HashMap<>();
         HashMap<Book, Integer>  books = new HashMap<>();
-//-----------fields------
+//-------------------GET AND SET---------
         public String getName() {
                 return name;
         }
@@ -65,14 +65,14 @@ public class Library {
         public void setBooks(HashMap<Book, Integer> books) {
                 this.books = books;
         }
-//-------------------get and set---------
+//--------------CONSTRUCTOR--------------------
         public Library(String name) {
                 this.name = name;
                 this.readers = null;
                 this.shelves = null;
                 this.books = null;
         }
-//--------------constructor---------------
+//----------------INITS----------------------
         public Code init(String filename){
                 File f = new File(filename);
                 Scanner scan = null;
@@ -85,9 +85,8 @@ public class Library {
                 //first line in library00 for book
                 Integer records = convertInt(scan.nextLine(), Code.BOOK_COUNT_ERROR);
                 initBooks(records,scan);
-
-                //LIST BOOKS GOES HERE
-
+                listBooks();
+                //TODO:LIST BOOKS GOES HERE
                 /*scan is being parsed and when previous method ends
                 scan leaves off from where it left off*/
 
@@ -120,27 +119,71 @@ public class Library {
                         author = split[Book.AUTHOR_];
                         date = convertDate(split[Book.DUE_DATE_], Code.DATE_CONVERSION_ERROR);
                         //add new book instance to list
-                        System.out.println(new Book(isbn,title,subject,pageCount,author,date));
+                        //System.out.println(new Book(isbn,title,subject,pageCount,author,date));
+                        addBook(new Book(isbn,title,subject,pageCount,author,date));
                         bookCount--;
-
                 }
-                return Code.UNKNOWN_ERROR;
+
+                return Code.SUCCESS;
         }
         private Code initShelves(int shelfCount,Scanner scan){
+                //public final static int SHELF_NUMBER=0;
+                //public final static int SUBJECT_=1;
+                int shelfNumber;
+                String subject;
+                if(shelfCount < 1){
+                        return Code.SHELF_COUNT_ERROR;
+                }
                 while(shelfCount>0){
-                        System.out.println("should be next lines from shelf: " + scan.nextLine());
+                        //System.out.println("should be next lines from shelf: " + scan.nextLine());
+                        String[] split =  scan.nextLine().split(",");
+                        shelfNumber  =  Integer.parseInt(split[Shelf.SHELF_NUMBER]);
+                        subject = split[Shelf.SUBJECT_];
+                        addShelf(new Shelf(shelfNumber,subject));
                         shelfCount--;
                 }
-                return Code.UNKNOWN_ERROR;
+                if(shelves.size() != shelfCount){
+                        System.out.println("Number of shelves doesn't match expected");
+                        return Code.SHELF_NUMBER_PARSE_ERROR;
+                }
+                return Code.SUCCESS;
         }
         private Code initReader(int readerCount,Scanner scan){
+                //public final static int CARD_NUMBER=0;
+                //        public final static int NAME_ = 1;
+                //        public final static int PHONE_ =2;
+                //        public static int BOOK_COUNT_ = 3;
+                //        public final static int BOOK_START_ = 4;
+                //        public Reader(int cardNumber, String name, String phone);
+
+                int cardNumber,bookcount,bookstart;
+                String name,phone,isbn;
+                LocalDate date;
+
+                if(readerCount <=0){
+                        return Code.READER_COUNT_ERROR;
+                }
                 while(readerCount>0){
-                        System.out.println("should be final lines from reader: " + scan.nextLine());
+                        String[] split =  scan.nextLine().split(",");
+                        cardNumber = Integer.parseInt(split[Reader.CARD_NUMBER_]);
+                        name = split[Reader.NAME_];
+                        phone = split[Reader.PHONE_];
+                        bookcount = Integer.parseInt(split[Reader.BOOK_COUNT_]);
+                        //System.out.println("should be final lines from reader: " + scan.nextLine());
+                        new Reader(cardNumber, name, phone);
+                        int index=0;
+                        for(int i = 0; i<bookcount;i++) {
+                                isbn = split[Reader.BOOK_START_ + index];
+                                date = convertDate(split[Reader.BOOK_START_ + 1 + index], Code.DATE_CONVERSION_ERROR);
+                                getBookByISBN(isbn);
+                                //TODO: If getBookISBN != null{call checkoutbook()}
+                            index+=2;
+                        }
                         readerCount--;
                 }
-                return Code.UNKNOWN_ERROR;
+                return Code.SUCCESS;
         }
-//----------------inits-------------
+//-----------------------CONVERTERS-------------------------------
         public static int convertInt(String recordCountString, Code code){
                 int records;
                 try {
@@ -220,18 +263,39 @@ public class Library {
                             dateSplit[2]);
                 }
         }
-//------------converters---------------
         public static Code checkForInvalidParse(int parsedRecord){
-                if(parsedRecord < 0){
-                        for(Code c :Code.values()){
-                                if(c.getCode() == parsedRecord){
-                                        return c;
-                                }
-                        }
-                }else if(parsedRecord > 0){
+                if(parsedRecord > 0){
                         return Code.SUCCESS;
                 }
                 System.out.println("No conditions met");
                 return Code.UNKNOWN_ERROR;
+        }
+//-----------------LIST AND ADD STUFF--------------------------
+        public int listBooks(){
+                return 0;
+        }
+        public Code addBook(Book book){
+                return Code.SUCCESS;
+        }
+        public Code addShelf(Shelf shelf){
+                return  Code.SUCCESS;
+        }
+        public Code addShelf(String shelfSubject){
+                return Code.SUCCESS;
+        }
+        //-----------------ERROR CODE-----------------------
+        private Code errorCode(int codeNumber) {
+                if (codeNumber < 0) {
+                        for (Code c : Code.values()) {
+                                if (c.getCode() == codeNumber) {
+                                        return c;
+                                }
+                        }
+                }
+                return Code.UNKNOWN_ERROR;
+        }
+//------------------CUSTOM GET STUFF METHODS ------------------
+        public Book getBookByISBN(String isbn){
+                return null;
         }
 }
