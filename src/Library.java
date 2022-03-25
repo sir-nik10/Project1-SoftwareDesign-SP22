@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Library {
 //-----------FIELDS------
@@ -86,13 +83,11 @@ public class Library {
                 Integer records = convertInt(scan.nextLine(), Code.BOOK_COUNT_ERROR);
                 initBooks(records,scan);
                 listBooks();
-                //TODO:LIST BOOKS GOES HERE
                 /*scan is being parsed and when previous method ends
                 scan leaves off from where it left off*/
 
                 records = convertInt(scan.nextLine(), Code.SHELF_COUNT_ERROR);
                 initShelves(records, scan);
-
                 //LIST SHELVES
 
                 //final parse
@@ -177,6 +172,7 @@ public class Library {
                                 date = convertDate(split[Reader.BOOK_START_ + 1 + index], Code.DATE_CONVERSION_ERROR);
                                 getBookByISBN(isbn);
                                 //TODO: If getBookISBN != null{call checkoutbook()}
+                                checkOutBook(null, null);
                             index+=2;
                         }
                         readerCount--;
@@ -270,20 +266,73 @@ public class Library {
                 System.out.println("No conditions met");
                 return Code.UNKNOWN_ERROR;
         }
-//-----------------LIST AND ADD STUFF--------------------------
+//------------------LIST STUFF--------------------------
         public int listBooks(){
                 return 0;
         }
-        public Code addBook(Book book){
-                return Code.SUCCESS;
+        public Code listShelves(Boolean showBooks){
+                return null;
+        }
+        public int listReaders(){
+                return 0;
+        }
+        public int listReaders(boolean shoeBooks){
+                return  0;
+        }
+//-----------------ADD STUFF--------------------------
+        public Code addBook(Book newBook){
+                if(books.containsKey(newBook)){
+                   books.put(newBook,books.get(newBook)+1);
+                        System.out.println(books.get(newBook)
+                        +" copies of [" + newBook.getTitle()
+                        +"] in the stacks.");
+                }else{
+                      books.put(newBook,1);
+                      System.out.println("["+newBook.getTitle()+"] added to the stacks.");
+                }
+                for(Map.Entry<String,Shelf> s : shelves.entrySet()){
+                        if(s.getValue().getSubject().equals(newBook.getSubject())){
+                                addBookToShelf(newBook,s.getValue());
+                                return Code.SUCCESS;
+                        }
+                }
+                System.out.println("No shelf for ["+newBook.getSubject()+"] books");
+                return Code.SHELF_EXISTS_ERROR;
         }
         public Code addShelf(Shelf shelf){
+                if(shelves.containsKey(shelf.getSubject())){
+                        System.out.println("ERROR: Shelf already exists ["+shelf+"]");
+                        return Code.SHELF_EXISTS_ERROR;
+                }else{
+                       shelves.put(shelf.getSubject(),shelf);
+                       shelf.setShelfNumber(shelves.size()+1);
+                }
+                for(Map.Entry<Book,Integer> b: books.entrySet()){
+                        if(b.getKey().getSubject().equals(shelf.getSubject())){
+                                addBookToShelf(b.getKey(),shelf);
+                        }
+                }
                 return  Code.SUCCESS;
         }
         public Code addShelf(String shelfSubject){
+                addShelf(new Shelf(shelves.size()+1,shelfSubject));
                 return Code.SUCCESS;
         }
-        //-----------------ERROR CODE-----------------------
+
+        private Code addBookToShelf(Book book, Shelf shelf){
+                if(returnBook(book).equals(Code.SUCCESS)){
+                        shelf.addBook(book);
+                        return Code.SUCCESS;
+                }else if(!shelf.getSubject().equals(book.getSubject())){
+                        return Code.SHELF_SUBJECT_MISMATCH_ERROR;
+                }else if(shelf.addBook(book).equals(Code.SUCCESS)){
+                        return Code.SUCCESS;
+                }else{
+                        System.out.println("Could not add ["+book+"] to shelf");
+                                return shelf.addBook(book);
+                }
+        }
+//-----------------ERROR CODE-----------------------
         private Code errorCode(int codeNumber) {
                 if (codeNumber < 0) {
                         for (Code c : Code.values()) {
@@ -298,4 +347,31 @@ public class Library {
         public Book getBookByISBN(String isbn){
                 return null;
         }
+        public Shelf getShelf(Integer shelfNumber){
+                return null;
+        }
+        public Shelf getShelf(String subject){
+                return null;
+        }
+
+        public Reader getReaderByCard(int cardNumber){
+                return null;
+        }
+//-------------------Remove Stuff------------------------
+       public  Code removeReader(Reader reader){
+                return null;
+       }
+//-------------------RETURN BOOKS-----------------------------
+       public Code returnBook(Book book){
+                return null;
+       }
+        public Code returnBook(Reader reader,Book book){
+                return Code.SUCCESS;
+       }
+       public Code checkOutBook(Reader reader ,Book book){
+               
+                return Code.SUCCESS;
+        }
+
 }
+

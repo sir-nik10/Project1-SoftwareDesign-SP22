@@ -86,4 +86,8 @@ class LibraryTest {
 //        assertEquals(LocalDate.of(0000,00,00),
 //                test.convertDate("0000-00-00",Code.DATE_CONVERSION_ERROR));
     }
+    @Test
+    void addBook(){
+
+    }
 }
