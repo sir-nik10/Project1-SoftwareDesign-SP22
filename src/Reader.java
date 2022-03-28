@@ -13,8 +13,9 @@ public class Reader {
         public final static int CARD_NUMBER_=0;
         public final static int NAME_ = 1;
         public final static int PHONE_ =2;
-        public static int BOOK_COUNT_ = 3;
+        public final static int BOOK_COUNT_ = 3;
         public final static int BOOK_START_ = 4;
+        //int bookcount=0;
         private int cardNumber;
         private String name;
         private String phone;
@@ -25,6 +26,7 @@ public class Reader {
                 this.name = name;
                 this.phone = phone;
         }
+
 
         public int getBookCount() {
                 return BOOK_COUNT_;
@@ -67,7 +69,6 @@ public class Reader {
                         return Code.BOOK_ALREADY_CHECKED_OUT_ERROR;
                 } else{
                 books.add(book);
-                BOOK_COUNT_++;
                 return Code.SUCCESS;
                 }
 
@@ -77,7 +78,6 @@ public class Reader {
                         if(!hasBook(book)) {
                                 return Code.READER_DOESNT_HAVE_BOOK_ERROR;
                         }else if(books.remove(book)){
-                                BOOK_COUNT_--;
                                 return Code.SUCCESS;
                         }
                 }catch(Exception e){
@@ -108,7 +108,7 @@ public class Reader {
                 return name +
                         " (" + cardNumber  +
                         ") has checked out { " +
-                        books.get(BOOK_COUNT_)+"}";
+                        books.toString()+"}";
         }
 }
 

@@ -20,7 +20,7 @@ class LibraryTest {
     void init() {
         Library test = new Library("test");
         test.init("Library00.csv");
-        //assertNotNull(test.init("Library00.csv"));
+        assertNotNull(test.init("Library00.csv"));
 
     }
 
@@ -88,6 +88,9 @@ class LibraryTest {
     }
     @Test
     void addBook(){
+        Library test = new Library("test");
+        Book newBook = new Book("1337","Headfirst Java","education",1337,"Grady Booch",LocalDate.now());
+        test.addBook(newBook);
 
     }
 }
