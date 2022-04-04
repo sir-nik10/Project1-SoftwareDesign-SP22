@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +12,6 @@ class LibraryTest {
     @BeforeEach
     void setUp() {
     }
-
     @AfterEach
     void tearDown() {
     }
@@ -21,7 +21,6 @@ class LibraryTest {
         Library test = new Library("test");
         test.init("Library00.csv");
         assertNotNull(test.init("Library00.csv"));
-
     }
 
     @Test
@@ -86,11 +85,37 @@ class LibraryTest {
 //        assertEquals(LocalDate.of(0000,00,00),
 //                test.convertDate("0000-00-00",Code.DATE_CONVERSION_ERROR));
     }
+    //-----BOOK--------
     @Test
     void addBook(){
+        //CASE ERROR! SUBJECT OF BOOK AND
+        //SUBJECT OF SHELF MUST BE SAME CASE
+        //SANITIZE BEFORE FUNCTIONS AND OPERATIONS
         Library test = new Library("test");
         Book newBook = new Book("1337","Headfirst Java","education",1337,"Grady Booch",LocalDate.now());
-        test.addBook(newBook);
+        Shelf newShelf = new Shelf(1,"education");
+        //CONDITION WHERE BOOK DOES NOT EXIST and
+        //IF SHELF DOES NOT EXIST
+        assertEquals(Code.SHELF_EXISTS_ERROR,test.addBook(newBook));
+        //CONDITION WHERE BOOK EXISTS and
+        //IF SHELF DOES NOT EXIST
+        HashMap<Book,Integer> books  = new HashMap<>();
+        books.put(newBook,1);
+        test.setBooks(books);
+        assertEquals(Code.SHELF_EXISTS_ERROR,test.addBook(newBook));
+        //CONDITION WHERE BOOK DOES EXIST and
+        //IF SHELF EXISTS
+        HashMap<String, Shelf> shelves = new HashMap<>();
+        shelves.put(newShelf.getSubject(),newShelf);
+        test.setShelves(shelves);
+        assertEquals(Code.SUCCESS,test.addBook(newBook));
+        //CONDITION WHERE BOOK EXISTS and
+        //IF SHELF EXISTS
+        assertEquals(Code.SUCCESS,test.addBook(newBook));
+    }
+
+    @Test
+    void getBookByISBN(){
 
     }
 }
