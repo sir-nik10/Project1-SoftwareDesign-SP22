@@ -191,7 +191,7 @@ public class Library {
                 int totalCount=0;
                 for(Book b: books.keySet()){
                         System.out.println(books.get(b)+
-                                "copies of "+ b);
+                                " copies of "+ b);
                         totalCount+=books.get(b);
                 }
                 return totalCount;
@@ -222,6 +222,8 @@ public class Library {
                                 }
                                 if(!reader.addBook(book).equals(Code.SUCCESS)){
                                         System.out.println("Couldn't checkout ["+book+"]");
+                                        return Code.BOOK_ALREADY_CHECKED_OUT_ERROR;
+
                                 }else {
                                         Code c = s.removeBook(book);
                                         if (c.equals(Code.SUCCESS)) {
